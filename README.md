@@ -14,7 +14,7 @@ Included is a simple shell script that uses the vanilla ALSA aplay and ALSA arec
 ```
 cp alsa-audio-pipe.sh /home/pi/alsa-audio-pipe
 sudo cp alsa-audio-pipe /etc/init.d/alsa-audio-pipe
-sudo chkconfig on alsa-audio-pipe
+sudo chkconfig --add alsa-audio-pipe
 ```
 
 # Audio Setup
