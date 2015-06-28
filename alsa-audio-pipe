@@ -14,7 +14,7 @@
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 
-DAEMON=/home/pi/alsa_audio_pipe/alsa_audio_piper.py
+DAEMON=/home/pi/alsa-audio-pipe/alsa_audio_piper.py
 DAEMONUSER=pi
 
 PIDDIR=/var/run/alsa_audio_piper

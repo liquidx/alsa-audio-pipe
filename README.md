@@ -13,8 +13,10 @@ equivalent of piping audio data from one device to another.
 # Setup
 
 ```
-cp alsa_audio_piper.py /home/pi/alsa_audio_piper.py
-sudo cp alsa-audio-pipe /etc/init.d/alsa-audio-pipe
+cd ~
+git clone https://github.com/liquidx/alsa-audio-pipe.git
+cd alsa-audio-pipe
+sudo make install  # installs script in to /etc/init.d/alsa-audio-pipe
 sudo chkconfig --add alsa-audio-pipe
 ```
 
