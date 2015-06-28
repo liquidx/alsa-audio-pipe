@@ -7,12 +7,13 @@ This is simply my set up on a Raspberry Pi running Raspbian that allows
 me to pipe in the audio in from a Griffin iMic USB audio dongle to a USB
 Harmon Kardon Soundsticks speaker system.
 
-Included is a simple shell script that uses the vanilla ALSA aplay and ALSA arecord to pipe the audio in user-space, and an rc-init script.
+Included is a python script that depends on python-alsasound that does the
+equivalent of piping audio data from one device to another.
 
 # Setup
 
 ```
-cp alsa-audio-pipe.sh /home/pi/alsa-audio-pipe
+cp alsa_audio_piper.py /home/pi/alsa_audio_piper.py
 sudo cp alsa-audio-pipe /etc/init.d/alsa-audio-pipe
 sudo chkconfig --add alsa-audio-pipe
 ```
@@ -37,6 +38,19 @@ pcm.imic {
 # Default to SoundSticks as the default audio device.
 defaults.pcm.!card "SoundSticks"
 defaults.ctl.!card "SoundSticks"
+```
+
+Adjust volume
+
+```
+alsamixer
+```
+
+Store and copy volume for next restart
+
+```
+sudo alsactl store
+sudo cp /var/lib/alsa/asound.state /etc/asound.state
 ```
 
 

@@ -11,23 +11,36 @@
 # Description:       Piping audio from one ALSA device to another.
 ### END INIT INFO
 
-DAEMON=/home/pi/alsa_audio_pipe/alsa-audio-pipe.sh
+
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
+
+DAEMON=/home/pi/alsa_audio_pipe/alsa_audio_piper.py
+DAEMONUSER=pi
+
+PIDDIR=/var/run/alsa_audio_piper
+PIDFILE=$PIDDIR/pid
+
+INPUT_DEVICE=system
+OUTPUT_DEVICE=SoundSticks
 
 test -x $DAEMON || exit 0
 
 . /lib/lsb/init-functions
 
 alsa_audio_pipe_start () {
-	log_daemon_msg "Starting alsa-audio-pipe daemon"
-	start-stop-daemon -n aplay -x $DAEMON --start -b
+	log_daemon_msg "Starting alsa-audio-pipe"
+	if [ ! -d $PIDDIR ]; then
+	    mkdir -p $PIDDIR
+	    chown $DAEMONUSER:$DAEMONUSER $PIDDIR
+	fi
+	start-stop-daemon -m -b -c $DAEMONUSER -p $PIDFILE -x $DAEMON --start -- --input $INPUT_DEVICE --output $OUTPUT_DEVICE
 	status=$?
 	log_end_msg ${status}
 }
 
 alsa_audio_pipe_stop () {
-	log_daemon_msg "Stopping alsa-audio-pipe daemon"
-	start-stop-daemon -n aplay --stop --retry 5 || echo -n "...which is not running"
+	log_daemon_msg "Stopping alsa-audio-pipe"
+	start-stop-daemon -p $PIDFILE --stop --retry 5 || echo -n "...which is not running"
 	log_end_msg $?
 }
 
@@ -41,12 +54,12 @@ case "$1" in
 		;;
 	force-stop)
 		alsa_audio_pipe_stop
-		killall aplay || true
+		kill $(cat $PIDFILE) || true
 		sleep 2
-		killall -9 aplay || true
+		killall -9 $(cat $PIDFILE) || true
 		;;
 	status)
-		status_of_proc -n aplay "$DAEMON" "alsa-audio-pipe daemon" && exit 0 || exit $?
+		status_of_proc -p $PIDFILE "$DAEMON" "alsa-audio-pipe" && exit 0 || exit $?
 		;;
 	*)
 		echo "Usage: /etc/init.d/alsa-audio-pipe {start|stop|force-stop|restart|reload|force-reload|status}"
