@@ -12,7 +12,7 @@ import alsaaudio
 import argparse
 
 
-def pipe(in_card, out_card, channels=2, rate=48000, periodsize=1024):
+def pipe(in_card, out_card, channels=2, rate=48000, periodsize=128):
   format = alsaaudio.PCM_FORMAT_S16_LE
   in_device = alsaaudio.PCM(alsaaudio.PCM_CAPTURE, alsaaudio.PCM_NORMAL, card=in_card)
   in_device.setchannels(channels)
