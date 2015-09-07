@@ -10,9 +10,9 @@
 
 import alsaaudio
 import argparse
+import struct
 
-
-def pipe(in_card, out_card, channels=2, rate=48000, periodsize=128):
+def pipe(in_card, out_card, channels=2, rate=48000, periodsize=128, floor_noise=0):
   format = alsaaudio.PCM_FORMAT_S16_LE
   in_device = alsaaudio.PCM(alsaaudio.PCM_CAPTURE, alsaaudio.PCM_NORMAL, card=in_card)
   in_device.setchannels(channels)
@@ -26,16 +26,31 @@ def pipe(in_card, out_card, channels=2, rate=48000, periodsize=128):
   out_device.setformat(format)
   out_device.setperiodsize(periodsize)
 
-  while True:
-    length, buf = in_device.read()
-    if length:
-      out_device.write(buf)
+  try:
+    while True:
+      length, buf = in_device.read()
+      buffer_silent = floor_noise and is_silent(length, buf, floor_noise)
+      if length and not buffer_silent:
+        out_device.write(buf)
+  except KeyboardInterrupt:
+    pass
 
+def is_silent(length, buf, floor_noise):
+  """Returns True if the clip is nearly silent."""
+  samples = len(buf) / 2  # each sample is a short (16-bit)
+  values = struct.unpack('<%dh' % samples, buf)
+  for v in values:
+    if abs(v) > floor_noise:
+      return False
+  return True
+  
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument('--input', '-i', help='Input card name')
   parser.add_argument('--output', '-o', help='Output card name')
+  parser.add_argument('--floor-noise', type=int,  default=0,
+                      help='Mute when samples are nearly silent')
   args = parser.parse_args()
 
-  pipe(args.input, args.output)
+  pipe(args.input, args.output, floor_noise=args.floor_noise)

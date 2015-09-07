@@ -22,6 +22,7 @@ PIDFILE=$PIDDIR/pid
 
 INPUT_DEVICE=system
 OUTPUT_DEVICE=SoundSticks
+FLOOR_NOISE=128
 
 test -x $DAEMON || exit 0
 
@@ -33,7 +34,7 @@ alsa_audio_pipe_start () {
 	    mkdir -p $PIDDIR
 	    chown $DAEMONUSER:$DAEMONUSER $PIDDIR
 	fi
-	start-stop-daemon -m -b -c $DAEMONUSER -p $PIDFILE -x $DAEMON --start -- --input $INPUT_DEVICE --output $OUTPUT_DEVICE
+	start-stop-daemon -m -b -c $DAEMONUSER -p $PIDFILE -x $DAEMON --start -- --input $INPUT_DEVICE --output $OUTPUT_DEVICE --floor-noise $FLOOR_NOISE
 	status=$?
 	log_end_msg ${status}
 }
