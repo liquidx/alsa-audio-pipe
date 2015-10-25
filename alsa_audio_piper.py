@@ -14,13 +14,13 @@ import struct
 
 def pipe(in_card, out_card, channels=2, rate=48000, periodsize=128, floor_noise=0):
   format = alsaaudio.PCM_FORMAT_S16_LE
-  in_device = alsaaudio.PCM(alsaaudio.PCM_CAPTURE, alsaaudio.PCM_NORMAL, card=in_card)
+  in_device = alsaaudio.PCM(alsaaudio.PCM_CAPTURE, alsaaudio.PCM_NORMAL, in_card)
   in_device.setchannels(channels)
   in_device.setrate(rate)
   in_device.setformat(format)
   in_device.setperiodsize(periodsize)
 
-  out_device = alsaaudio.PCM(alsaaudio.PCM_PLAYBACK, card=out_card)
+  out_device = alsaaudio.PCM(alsaaudio.PCM_PLAYBACK, alsaaudio.PCM_NORMAL, out_card)
   out_device.setchannels(channels)
   out_device.setrate(rate)
   out_device.setformat(format)
@@ -49,8 +49,17 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument('--input', '-i', help='Input card name')
   parser.add_argument('--output', '-o', help='Output card name')
+  parser.add_argument('--verbose', '-v', action='store_true', help='Verbose')
   parser.add_argument('--floor-noise', type=int,  default=0,
                       help='Mute when samples are nearly silent')
   args = parser.parse_args()
+
+  if args.verbose:
+    print 'Cards: '
+    for card in alsaaudio.cards():
+      print '  ', card
+    print 'PCMs: '
+    for pcm in alsaaudio.pcms():
+      print '  ', pcm
 
   pipe(args.input, args.output, floor_noise=args.floor_noise)

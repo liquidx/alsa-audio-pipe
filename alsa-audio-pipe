@@ -20,9 +20,9 @@ DAEMONUSER=pi
 PIDDIR=/var/run/alsa_audio_piper
 PIDFILE=$PIDDIR/pid
 
-INPUT_DEVICE=system
-OUTPUT_DEVICE=SoundSticks
-FLOOR_NOISE=128
+INPUT_DEVICE=imic
+OUTPUT_DEVICE=soundsticks
+FLOOR_NOISE=0
 
 test -x $DAEMON || exit 0
 
