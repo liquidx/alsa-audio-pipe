@@ -28,17 +28,56 @@ sudo python setup.py install
 cd ~
 git clone https://github.com/liquidx/alsa-audio-pipe.git
 cd alsa-audio-pipe
-sudo make install  # installs script in to /etc/init.d/alsa-audio-pipe
-sudo chkconfig --add alsa-audio-pipe
 ```
 
-# Starting and stopping the service
+## Testing
+
+```
+./alsa_audio_piper.py --input imic --output soundsticks --floor-noise 0
+```
+
+Replace `imic` and `soundsticks` with your device names (see below on setting up audio if you have problems.)
+
+
+## Enabling on boot (rc.d style)
+
+For enabling on Debian/Raspbian Wheezy which uses init.d/rc.d style init scripts, do the following:
+
+```
+sudo cp alsa-audio-pipe /etc/init.d
+# Option 1. Install using chkconfig
+sudo chkconfig --add alsa-audio-pipe
+# Option 2. Install using update-rc.d
+sudo update-rc.d alsa-audio-pipe defaults
+```
+
+To start and stop the service
 
 ```
 # start the alsa-audio-pipe
 sudo service alsa-audio-pipe start
 # Stop the alsa-audio-pipe
 sudo service alsa-audio-pipe stop
+```
+
+## Enabling service on boot (systemd style)
+
+For more modern distributions, like Debian Jessie that uses systemd style.
+
+```
+sudo cp alsa-audio-pipe.service /etc/systemd/system
+sudo systemctl daemon-reload
+sudo systemctl enable alsa-audio-pipe
+sudo systemctl start alsa-audio-pipe
+```
+
+To start and stop the service
+
+```
+# start the alsa-audio-pipe
+sudo systemctl start alsa-audio-pipe
+# Stop the alsa-audio-pipe
+sudo systemctl stop alsa-audio-pipe stop
 ```
 
 # Audio Setup
