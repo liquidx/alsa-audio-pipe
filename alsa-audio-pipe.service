@@ -1,0 +1,12 @@
+[Unit]
+Description=Piping audio from one ALSA device to another
+After=udev.service
+
+[Service]
+Type=simple
+ExecStart=/home/pi/alsa-audio-pipe/alsa_audio_piper.py --input imic --output soundsticks --floor-noise 0
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
