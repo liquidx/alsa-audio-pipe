@@ -31,7 +31,7 @@ def pipe(in_card, out_card, channels=2, rate=48000, periodsize=128, floor_noise=
       length, buf = in_device.read()
       buffer_silent = floor_noise and is_silent(length, buf, floor_noise)
       try:
-        if length and not buffer_silent:
+        if length > 0 and not buffer_silent:
           out_device.write(buf)
       except alsaaudio.ALSAAudioError:
         print 'Possible failed to provide proper frame size: %d' % length
